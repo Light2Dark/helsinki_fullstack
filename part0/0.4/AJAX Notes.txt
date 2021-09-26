@@ -1,0 +1,24 @@
+title AJAX Notes
+
+note left of browser: 
+User submits form
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+
+note right of server:
+URL redirect
+end note
+
+server --> browser: Returns URL '/exampleapp/notes'
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+note right of server: 
+browser reloads 
+end note
+
+server --> browser: Returns HTML content
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server --> browser: Returns CSS
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+server --> browser: Returns JS
+browser -> server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server --> browser: Returns data json file

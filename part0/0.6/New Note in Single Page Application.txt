@@ -1,0 +1,24 @@
+title New Note in Single Page Application
+
+note over browser:
+When user 'submits' form, 
+form submit doesn't happen
+end note
+
+note over browser:
+JS will convert content of form into object 
+and save it as a new note
+end note
+
+note over browser:
+Browser will execute the event handler
+that redraws notes to display
+end note
+
+note over browser:
+JS will then send this new note to server as POST request
+by creating a XMLHttpRequest
+end note
+
+browser -> server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server --> browser: Returns new_note_spa. Has content and date
