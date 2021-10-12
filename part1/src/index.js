@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import App from './App';
+import App2 from './partd'
 
 let counter = 1
 
