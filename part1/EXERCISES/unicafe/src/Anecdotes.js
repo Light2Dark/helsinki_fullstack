@@ -50,4 +50,18 @@ const Button = ({text, onClick}) => <><button onClick = {onClick}>{text}</button
 
 const Title = ({text}) => <><h1>{text}</h1></>
 
+// From solutions
+const Anecdote = ({text, votes = 0}) => {
+  return (
+    <div>
+      <div>
+        {text}
+      </div>
+      <div>
+        has {value} votes
+      </div>
+    </div>
+  )
+}
+
 export default AnecdoteApp;
