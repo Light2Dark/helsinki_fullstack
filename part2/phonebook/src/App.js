@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
-import Persons from './components/Persons'
+import Person from './components/Person'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import phoneService from './services/phoneService'
 
 function App() {
   const [persons, setPersons] = useState([])
@@ -10,27 +10,44 @@ function App() {
 
   useEffect(() => {
     console.log("effect")
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {setPersons(response.data)} )
+    phoneService
+      .getAll()
+      .then(personsData => {setPersons(personsData)} )
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
-    for (const person of persons) {
-      if (person.name === newName) {
-        alert(`${newName} is already added in the phonebook.`)
-        return
-      }
-    }
-
+    
     const personObject = {
       name: newName,
       number: newNumber,
     }
+
+    for (const person of persons) {
+      if (person.name === personObject.name) {
+        
+        if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+          phoneService
+            .replace(person.id, personObject) // put returns updated person
+            .then(returnedPerson => {
+              setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
+            })
+
+        }
+        setNewName("")
+        setNewNumber("")
+        return
+      }
+    }
     
-    setPersons(persons.concat(personObject))
+    phoneService
+      .create(personObject)
+      .then(newPerson => setPersons(persons.concat(newPerson)))
+
+    setNewNumber("")
+    console.log(setNewNumber)
     setNewName("")
+
   }
 
   const handleNameChange = (event) => {
@@ -41,13 +58,27 @@ function App() {
     setNewNumber(event.target.value)
   }
 
+  const deleteNum = (id, name) => {
+    if (!(window.confirm(`Delete ${name}?`))) return // if user cancels, return
+    phoneService
+      .deleteNum(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+      .catch(error => {
+        alert(`The number for ${name} has ${error}`)
+      })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
       <PersonForm onSubmit = {addPerson} persons = {persons} newName = {newName} handleNameChange = {handleNameChange} number = {newNumber} handleNumberChange = {handleNumberChange} />
 
       <h2>Numbers</h2>
-      <Persons persons = {persons}/>
+      {persons.map(person => {
+        return (
+          <Person key = {person.id} name = {person.name} number = {person.number} deleteNum = {() => deleteNum(person.id, person.name)} />
+        )
+      })}
     </div>
   );
 }
