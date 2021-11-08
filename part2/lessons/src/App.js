@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
 import Note from './components/Note'
+import noteService from './services/notes'
 
 const App = () => {
   // const {notes} = props // {notes} refers to props.notes
@@ -10,11 +10,10 @@ const App = () => {
 
   const hook = () => {
     console.log("effect")
-    axios
-      .get("http://localhost:3001/notes")
-      .then(response => {
-        console.log("promise fulfilled")
-        setNotes(response.data)
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
 
       // const promise = axios.get("...")
@@ -26,20 +25,44 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault()
+    if (newNote === "") return
     const noteObject = {
       content: newNote,
       date: new Date().toISOString(),
       important: Math.random() < 0.5,
-      id: notes.length + 1
+      // id: notes.length + 1
     }
-    setNotes(notes.concat(noteObject))
-    setNewNote("")
+    // setNotes(notes.concat(noteObject))
+    // setNewNote("")
+
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote("")
+      })
   }
 
   const handleNoteChange = (event) => {
     console.log(event.target.value)
     setNewNote(event.target.value)
   }
+
+  const toggleImportanceOf = (id) => {
+    const note = notes.find(n => n.id === id) // return note which has note.id ==== id
+    const changedNote = {...note, important: !note.important}
+    // `importance of ${id} needs to be toggled`
+
+    noteService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(noteHere => noteHere.id !== id ? noteHere : returnedNote)) // create a new array, map all items from old array into new array
+      }) 
+      .catch(error => {
+        alert(`the note ${note.id} was already deleted from server`)
+        setNotes(notes.filter(n => n.id !== id)) // returns a new array where the items in the list pass the parameter, so if id of this non existent note is 1000, return all the notes that are not 1000
+      })
+    }
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important)
   // same as note => note.important === true
@@ -54,12 +77,12 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map(note => 
-          <Note key = {note.id} note = {note.content} />
+          <Note key = {note.id} note = {note} toggleImportance ={() => {toggleImportanceOf(note.id)}} />
         )}
       </ul>
       {/* <ul> 
         {notes.map(note => 
-          <Note key = {note.id} note = {note.content} />
+          <Note key = {note.id} note = {note} />
         )}
       </ul> */}
       <form onSubmit = {addNote}>
