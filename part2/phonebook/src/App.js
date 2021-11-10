@@ -2,14 +2,17 @@ import React, {useState, useEffect} from 'react'
 import Person from './components/Person'
 import PersonForm from './components/PersonForm'
 import phoneService from './services/phoneService'
+import {SuccessNotification, ErrorNotification} from './components/Notification'
+import './index.css'
 
 function App() {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [addedMessage, setAddedMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    console.log("effect")
     phoneService
       .getAll()
       .then(personsData => {setPersons(personsData)} )
@@ -32,7 +35,13 @@ function App() {
             .then(returnedPerson => {
               setPersons(persons.map(person => person.id !== returnedPerson.id ? person : returnedPerson))
             })
-
+            .catch(error => {
+              setErrorMessage(`Information of ${person.name} has already been removed from the server`)
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 4000)
+              setPersons(persons.filter(p => person.name !== p.name))
+            })
         }
         setNewName("")
         setNewNumber("")
@@ -45,9 +54,11 @@ function App() {
       .then(newPerson => setPersons(persons.concat(newPerson)))
 
     setNewNumber("")
-    console.log(setNewNumber)
     setNewName("")
-
+    setAddedMessage(`Added ${personObject.name}`)
+    setTimeout(() => {
+      setAddedMessage(null)
+    }, 4000)
   }
 
   const handleNameChange = (event) => {
@@ -71,7 +82,9 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <PersonForm onSubmit = {addPerson} persons = {persons} newName = {newName} handleNameChange = {handleNameChange} number = {newNumber} handleNumberChange = {handleNumberChange} />
+      <SuccessNotification message = {errorMessage} />
+      <ErrorNotification message = {addedMessage} />
+      <PersonForm onSubmit = {addPerson} persons = {persons} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange} />
 
       <h2>Numbers</h2>
       {persons.map(person => {
