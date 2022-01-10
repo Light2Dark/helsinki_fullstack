@@ -32,6 +32,7 @@ function App() {
         setWeather(response.data)
       })
   }
+  // also can do const url = "http://..../current?access_key=${}&query..."
 
   const handleChangeCountry = (event) => { 
     let countryName = event.target.value

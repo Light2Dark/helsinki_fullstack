@@ -22,4 +22,11 @@ const ErrorNotification = ({message}) => {
     )
 }
 
+// based on notification.type
+// return (
+//     <div className={notification.type}>
+//       {notification.message}
+//     </div>
+//   )
+
 export {SuccessNotification, ErrorNotification}

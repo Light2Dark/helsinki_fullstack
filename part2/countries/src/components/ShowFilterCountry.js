@@ -23,6 +23,8 @@ const ShowFilteredCountry = (props) => {
     )
 }
 // conditional statement within JSX
+// can also do if statements with individual returns
+// if (countries.length === 1 return(<div>..</div>))
 
 const CountryList = ({country}) => {
     return (
@@ -63,3 +65,19 @@ const Country = (props) => {
 }
 
 export default ShowFilteredCountry
+
+const Search = ({ value, setValue }) => {
+    const handleChange = (event) => {
+      setValue(event.target.value)
+    }
+  
+    return (
+      <div>
+        find countries 
+        <input value={value} onChange={handleChange} />
+      </div>
+    )
+}
+// Search Filter
+// const [countries, setCountries] = useState([])
+// const [filter, setFilter] = useState('')
