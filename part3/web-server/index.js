@@ -4,6 +4,7 @@ const cors = require("cors")
 
 app.use(express.json()) // json-parser
 app.use(cors()) // middleware
+app.use(express.static("build"))
 
 const requestlogger = (request, response, next) => {
     console.log("Method:", request.method)
