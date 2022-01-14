@@ -73,7 +73,11 @@ app.post("/api/persons", (request, response) => {
     response.json(newPerson)
 })
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({error: "Unknwon endpoint"})
+}
 
+app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
